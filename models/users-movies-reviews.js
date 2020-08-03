@@ -8,6 +8,8 @@ const schema = mongoose.Schema({
   'movieId': { type: mongoose.Schema.Types.ObjectId, ref: 'movies' },
   'review': String,
   'userId': { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
+  'stars': Number,
+  
 }, {
   timestamps: true,
 });
