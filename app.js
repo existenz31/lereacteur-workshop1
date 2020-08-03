@@ -11,6 +11,7 @@ const {
   PUBLIC_ROUTES,
 } = require('forest-express-mongoose');
 
+
 const app = express();
 
 app.use(morgan('tiny'));
