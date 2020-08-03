@@ -1,0 +1,17 @@
+version: '3.4'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lereacteur_workshop_1
+    environment:
+      - APPLICATION_PORT=3310
+      - DATABASE_URL=mongodb://heroku_ktrhs91p:q42lb4ipulfqkd3sgnusl5aege@ds047474.mlab.com:47474/heroku_ktrhs91p?authSource=heroku_ktrhs91p
+      - DATABASE_SSL=true
+      - FOREST_AUTH_SECRET=c1649554d65d056da9b9a789c1a5995e4784743456bd8ed5e1b94c1a2f3d6cad2b8ef32c0f786493d498da17b1c0c0a4
+      - FOREST_ENV_SECRET=299653af8a2632ea1e719f7bae913070a0448ae7252c8c916d9ea3a55922dd9b
+    ports:
+      - "3310:3310"
+    volumes:
+      - ./:/usr/src/app
