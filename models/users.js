@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema({
   'firstName': String,
   'lastName': String,
+  'email': String,
+  'dob': Date,
   'avatar': String,
   'rentals': { type: [mongoose.Schema.Types.ObjectId], ref: 'usersMoviesRentals' },
   'reviews': { type: [mongoose.Schema.Types.ObjectId], ref: 'usersMoviesReviews' },

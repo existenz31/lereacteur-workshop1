@@ -1,0 +1,1 @@
+{"options":{"flags":{"$numberInt":"1"}},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"heroku_ktrhs91p.users_movies_reviews"}],"uuid":"c4c2b277614a47c28126819f4232135b"}

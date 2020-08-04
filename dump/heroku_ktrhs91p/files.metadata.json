@@ -1,0 +1,1 @@
+{"options":{"flags":{"$numberInt":"1"}},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"heroku_ktrhs91p.files"}],"uuid":"f3f43ed7699f46639baa53a49648c6e6"}

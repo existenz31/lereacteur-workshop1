@@ -5,28 +5,16 @@ const mongoose = require('mongoose');
 // This section contains the properties of your model, mapped to your collection's properties.
 // Learn more here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/models/enrich-your-models#declaring-a-new-field-in-a-model
 const schema = mongoose.Schema({
-  'actors': [String],
-  'countries': [String],
-  'director':   { type: mongoose.Schema.Types.ObjectId, ref: 'directors' },
-  'genre': {
+  'name': String,
+  'dob': Date,
+  'picture': String,
+  'nationality': {
     type: String,
-    enum : ['Sci-Fi','Comedy','Drama','Action','Romance','Fantasy','Adventure','Horror','War','Western'],
-    default: 'Sci-Fi'
+    enum : ['American','Canadian','French','Irish','English','Italian','Australian'],
+    default: 'American'
   },  
-  'imdb': {
-    id: String,
-    rating: Number,
-    votes: Number,
-  },
-  'metacritic': Number,
-  'plot': String,
-  'poster': String,
-  'rated': String,
-  'runtime': Number,
-  'title': String,
-  'year': Number,
 }, {
   timestamps: true,
 });
 
-module.exports = mongoose.model('movies', schema, 'movies');
+module.exports = mongoose.model('directors', schema, 'directors');
