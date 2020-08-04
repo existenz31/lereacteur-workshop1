@@ -1,6 +1,9 @@
 const express = require('express');
 const { PermissionMiddlewareCreator } = require('forest-express-mongoose');
-const { users } = require('../models');
+const { users, movies, usersMoviesRentals } = require('../models');
+const mongoose = require('mongoose');
+const P = require('bluebird');
+const Liana = require('forest-express-mongoose');
 
 const collectionName = 'users'
 const router = express.Router();
@@ -56,6 +59,55 @@ router.get(`/${collectionName}.csv`, permissionMiddlewareCreator.export(), (requ
 router.delete(`/${collectionName}`, permissionMiddlewareCreator.delete(), (request, response, next) => {
   // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/default-routes#delete-a-list-of-records
   next();
+});
+
+router.get(`/${collectionName}/:recordId/relationships/moviesRentals`, (req, res, next) => {
+  let limit = parseInt(req.query.page.size) || 10;
+  let offset = (parseInt(req.query.page.number) - 1) * limit;
+  let recordId = req.params.recordId;
+
+  let dataQuery = movies.aggregate([
+    {
+      $lookup: {
+        from: "users_movies_rentals",
+        localField: "_id",
+        foreignField: "movieId",
+        as: "moviesRentals"
+      }
+    },
+    {$match:{"moviesRentals.userId": new mongoose.Types.ObjectId(recordId)}},
+    {$unwind: "$moviesRentals"},
+    {$sort: {"moviesRentals.rental_date": -1}},
+    {$limit: limit},
+    {$skip: offset},
+    {$project: { "moviesRentals": 0 } }
+  ]);
+
+  let countQuery = usersMoviesRentals.aggregate([
+    {$match:{"userId": new mongoose.Types.ObjectId(recordId)}},
+    {
+      $group: {
+        _id: null,
+        "nbRentals":{$sum:1}
+      }
+  }
+]);
+
+  return P
+  .all([
+    countQuery,
+    dataQuery
+  ])
+  .spread((countResult, records) => {
+    return new Liana.ResourceSerializer(Liana, movies, records, null, {
+      count: countResult[0].nbRentals
+    }).perform();
+  })
+  .then((serializedData) => {
+    res.send(serializedData);
+  })
+  .catch((err) => next(err));
+
 });
 
 module.exports = router;

@@ -5,6 +5,8 @@ const models = {};
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
+mongoose.set('debug', true);
+
 function filterFile(filename) {
   if (filename.endsWith('.js') && filename !== 'index.js') {
     return filename;
