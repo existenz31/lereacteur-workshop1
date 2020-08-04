@@ -12,7 +12,12 @@ const schema = mongoose.Schema({
   'avatar': String,
   'rentals': { type: [mongoose.Schema.Types.ObjectId], ref: 'usersMoviesRentals' },
   'reviews': { type: [mongoose.Schema.Types.ObjectId], ref: 'usersMoviesReviews' },
-  'status': String,
+  'status': {
+    type: String,
+    enum : ['PENDING','APPROUVED','REJECTED'],
+    default: 'PENDING'
+  },  
+  'stripeId': Number,
 }, {
   timestamps: true,
 });

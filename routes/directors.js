@@ -1,8 +1,8 @@
 const express = require('express');
 const { PermissionMiddlewareCreator } = require('forest-express-mongoose');
-const { files } = require('../models');
+const { directors } = require('../models');
 
-const collectionName = 'files'
+const collectionName = 'directors'
 const router = express.Router();
 const permissionMiddlewareCreator = new PermissionMiddlewareCreator(`${collectionName}`);
 

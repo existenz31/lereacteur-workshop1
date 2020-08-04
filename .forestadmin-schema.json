@@ -583,6 +583,20 @@
       "inverseOf": null,
       "validations": []
     }, {
+      "field": "fullName",
+      "type": "String",
+      "defaultValue": null,
+      "enums": null,
+      "integration": null,
+      "isFilterable": false,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": false,
+      "isVirtual": true,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
       "field": "lastName",
       "type": "String",
       "defaultValue": null,
@@ -626,7 +640,25 @@
       "validations": []
     }, {
       "field": "status",
-      "type": "String",
+      "type": "Enum",
+      "defaultValue": "PENDING",
+      "enums": [
+        "PENDING",
+        "APPROUVED",
+        "REJECTED"
+      ],
+      "integration": null,
+      "isFilterable": true,
+      "isReadOnly": false,
+      "isRequired": false,
+      "isSortable": true,
+      "isVirtual": false,
+      "reference": null,
+      "inverseOf": null,
+      "validations": []
+    }, {
+      "field": "stripeId",
+      "type": "Number",
       "defaultValue": null,
       "enums": null,
       "integration": null,
