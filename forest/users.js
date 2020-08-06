@@ -22,13 +22,6 @@ collection('users', {
 
       return user;
     },
-    // search(search) {
-    //   let names = search.split(' ');    ​
-    //   return {
-    //     firstName: names[0],
-    //     lastName: names[1]
-    //   };
-    // }
   }, {
     field: 'nbRentals',
     type: 'Number',
@@ -66,7 +59,7 @@ collection('users', {
         ])
         .then((result) => {
           if (result && result.length > 0) { 
-            return result[0].avg; 
+            return result[0].avg.toFixed(2); 
           }
           return 0;
         });

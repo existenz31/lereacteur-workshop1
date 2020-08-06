@@ -99,8 +99,10 @@ router.get(`/${collectionName}/:recordId/relationships/moviesRentals`, (req, res
     dataQuery
   ])
   .spread((countResult, records) => {
+    var nbRentals = 0;
+    if (countResult && countResult.length > 0 ) nbRentals = countResult[0].nbRentals;
     return new Liana.ResourceSerializer(Liana, movies, records, null, {
-      count: countResult[0].nbRentals
+      count: nbRentals
     }).perform();
   })
   .then((serializedData) => {
@@ -109,5 +111,15 @@ router.get(`/${collectionName}/:recordId/relationships/moviesRentals`, (req, res
   .catch((err) => next(err));
 
 });
+
+router.get(`/${collectionName}/status`, (req, res, next) => {
+  let data = [
+    "PENDING\\nBIS",
+    "APPROUVED",
+    "REJECTED"
+  ];
+  res.send({data});
+});
+
 
 module.exports = router;

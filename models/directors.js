@@ -13,6 +13,7 @@ const schema = mongoose.Schema({
     enum : ['American','Canadian','French','Irish','English','Italian','Australian'],
     default: 'American'
   },  
+  'movies': { type: [mongoose.Schema.Types.ObjectId], ref: 'movies' },
 }, {
   timestamps: true,
 });
