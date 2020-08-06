@@ -9,7 +9,10 @@ const mongoose = require('mongoose');
 // - Smart segments: https://docs.forestadmin.com/documentation/reference-guide/segments/smart-segments
 collection('users', {
   actions: [],
-  fields: [{
+/*************************************************************************************************
+ * Implementation of the Smart Fields: fullName (First + Last Name) & gradeReviews (Average)
+ *************************************************************************************************/
+fields: [{
     field: 'fullName',
     type: 'String',
     get: (user) => {
