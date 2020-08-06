@@ -8,7 +8,22 @@ const mongoose = require('mongoose');
 // - Smart relationships: https://docs.forestadmin.com/documentation/reference-guide/relationships/create-a-smart-relationship
 // - Smart segments: https://docs.forestadmin.com/documentation/reference-guide/segments/smart-segments
 collection('users', {
-  actions: [],
+  actions: [
+    {
+      name: 'accept user',
+    },
+    {
+      name: 'upload file',
+      type: 'single',
+      fields: [{
+        field: 'fileName',
+        type: 'String',
+      }, {
+        field: 'file',
+        widget: 'file picker',
+      }],
+    },
+  ],
 /*************************************************************************************************
  * Implementation of the Smart Fields: fullName (First + Last Name) & gradeReviews (Average)
  *************************************************************************************************/
