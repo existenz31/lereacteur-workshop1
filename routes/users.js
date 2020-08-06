@@ -61,6 +61,9 @@ router.delete(`/${collectionName}`, permissionMiddlewareCreator.delete(), (reque
   next();
 });
 
+/*************************************************************************************************
+ * Implementation of the Smart Relationship between Users to Movies Through MoviesRentals
+ *************************************************************************************************/
 router.get(`/${collectionName}/:recordId/relationships/moviesRentals`, (req, res, next) => {
   let limit = parseInt(req.query.page.size) || 10;
   let offset = (parseInt(req.query.page.number) - 1) * limit;
@@ -111,15 +114,5 @@ router.get(`/${collectionName}/:recordId/relationships/moviesRentals`, (req, res
   .catch((err) => next(err));
 
 });
-
-router.get(`/${collectionName}/status`, (req, res, next) => {
-  let data = [
-    "PENDING\\nBIS",
-    "APPROUVED",
-    "REJECTED"
-  ];
-  res.send({data});
-});
-
 
 module.exports = router;
