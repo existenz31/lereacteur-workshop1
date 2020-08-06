@@ -17,6 +17,6 @@
     "morgan": "1.9.1",
     "require-all": "^3.0.0",
     "mongoose": "~5.8.2",
-    "cloudinary": "^1.22.0",
+    "cloudinary": "^1.22.0"
   }
 }

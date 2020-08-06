@@ -10,10 +10,13 @@ const mongoose = require('mongoose');
 collection('users', {
   actions: [
     {
-      name: 'accept user',
+      name: 'Approuve User',
     },
     {
-      name: 'upload file',
+      name: 'Reject User',
+    },
+    {
+      name: 'Upload File',
       type: 'single',
       fields: [{
         field: 'fileName',

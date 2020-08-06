@@ -1,6 +1,6 @@
 const express = require('express');
-const { PermissionMiddlewareCreator } = require('forest-express-mongoose');
-const { users, movies, usersMoviesRentals } = require('../models');
+const { PermissionMiddlewareCreator, RecordsGetter } = require('forest-express-mongoose');
+const { users, movies, usersMoviesRentals, files } = require('../models');
 const mongoose = require('mongoose');
 const P = require('bluebird');
 const Liana = require('forest-express-mongoose');
@@ -64,20 +64,34 @@ router.delete(`/${collectionName}`, permissionMiddlewareCreator.delete(), (reque
 });
 
 /*************************************************************************************************
- * Implementation of the Smart Action accept user
+ * Implementation of the Smart Action Accept User
  *************************************************************************************************/
 
-router.post('/actions/accept-user', permissionMiddlewareCreator.smartAction(), (req, res) => {
+router.post('/actions/approuve-user', permissionMiddlewareCreator.smartAction(), (req, res) => {
   return recordsGetter.getIdsFromRequest(req)
     .then((userIds) => {
       return users
-        .update({ _id: userIds }, { $set: { status: 'ACCEPTED' } })
+        .update({ _id: userIds }, { $set: { status: 'APPROUVED' } })
         .then(() => {
           res.send({ success: 'User is now accepted!' });
         });
     });
 });
 
+/*************************************************************************************************
+ * Implementation of the Smart Action Reject User
+ *************************************************************************************************/
+
+router.post('/actions/reject-user', permissionMiddlewareCreator.smartAction(), (req, res) => {
+  return recordsGetter.getIdsFromRequest(req)
+    .then((userIds) => {
+      return users
+        .update({ _id: userIds }, { $set: { status: 'REJECTED' } })
+        .then(() => {
+          res.send({ success: 'User is now rejected!' });
+        });
+    });
+});
 /*************************************************************************************************
  * Implementation of the Smart Action upload file
  *************************************************************************************************/
@@ -93,14 +107,25 @@ router.post('/actions/upload-file', permissionMiddlewareCreator.smartAction(), (
 
   cloudinary.uploader.upload(idDocument)
     .then((result) => {
-      files.create({
+      // Create the file, linked to the user (entity_id)
+      return files.create({
         entity_id: { _id: userId },
         name: fileName,
+        size: (result.bytes / 1024).toFixed(2),
         type: result.resource_type,
         url: result.url,
       });
     })
-    .then(() => res.send({ success: 'File uploaded' }));
+    .then((file) => { 
+      // Add the file to the user hasMany [files]
+      return users.update(
+        { _id: file.entity_id }, 
+        { $push: { files: file } }
+      );
+    })
+    .then(() => {
+      res.send({ success: 'File uploaded' });
+    });
 });
 
 /*************************************************************************************************

@@ -756,7 +756,54 @@
       "validations": []
     }],
     "segments": [],
-    "actions": []
+    "actions": [{
+      "name": "Approuve User",
+      "type": "bulk",
+      "baseUrl": null,
+      "endpoint": "/forest/actions/approuve-user",
+      "httpMethod": "POST",
+      "redirect": null,
+      "download": false,
+      "fields": []
+    }, {
+      "name": "Reject User",
+      "type": "bulk",
+      "baseUrl": null,
+      "endpoint": "/forest/actions/reject-user",
+      "httpMethod": "POST",
+      "redirect": null,
+      "download": false,
+      "fields": []
+    }, {
+      "name": "Upload File",
+      "type": "single",
+      "baseUrl": null,
+      "endpoint": "/forest/actions/upload-file",
+      "httpMethod": "POST",
+      "redirect": null,
+      "download": false,
+      "fields": [{
+        "field": "fileName",
+        "type": "String",
+        "defaultValue": null,
+        "enums": null,
+        "isRequired": false,
+        "reference": null,
+        "description": null,
+        "position": 0,
+        "widget": null
+      }, {
+        "field": "file",
+        "type": "String",
+        "defaultValue": null,
+        "enums": null,
+        "isRequired": false,
+        "reference": null,
+        "description": null,
+        "position": 1,
+        "widget": "file picker"
+      }]
+    }]
   }, {
     "name": "usersMoviesRentals",
     "nameOld": "users_movies_rentals",
