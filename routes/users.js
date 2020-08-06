@@ -4,10 +4,12 @@ const { users, movies, usersMoviesRentals } = require('../models');
 const mongoose = require('mongoose');
 const P = require('bluebird');
 const Liana = require('forest-express-mongoose');
+const cloudinary = require('cloudinary').v2;
 
 const collectionName = 'users'
 const router = express.Router();
 const permissionMiddlewareCreator = new PermissionMiddlewareCreator(`${collectionName}`);
+const recordsGetter = new RecordsGetter(users);
 
 // This file contains the logic of every route in Forest Admin for the collection :
 // - Native routes are already generated but can be extended/overriden - Learn how to extend a route here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/extend-a-route
@@ -59,6 +61,46 @@ router.get(`/${collectionName}.csv`, permissionMiddlewareCreator.export(), (requ
 router.delete(`/${collectionName}`, permissionMiddlewareCreator.delete(), (request, response, next) => {
   // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/default-routes#delete-a-list-of-records
   next();
+});
+
+/*************************************************************************************************
+ * Implementation of the Smart Action accept user
+ *************************************************************************************************/
+
+router.post('/actions/accept-user', permissionMiddlewareCreator.smartAction(), (req, res) => {
+  return recordsGetter.getIdsFromRequest(req)
+    .then((userIds) => {
+      return users
+        .update({ _id: userIds }, { $set: { status: 'ACCEPTED' } })
+        .then(() => {
+          res.send({ success: 'User is now accepted!' });
+        });
+    });
+});
+
+/*************************************************************************************************
+ * Implementation of the Smart Action upload file
+ *************************************************************************************************/
+
+router.post('/actions/upload-file', permissionMiddlewareCreator.smartAction(), (req, res) => {
+  // Get the current user id
+  const userId = req.body.data.attributes.ids[0];
+
+  // Get the values of the input fields entered by the user.
+  const attrs = req.body.data.attributes.values;
+  const idDocument = attrs.file;
+  const fileName = attrs.fileName;
+
+  cloudinary.uploader.upload(idDocument)
+    .then((result) => {
+      files.create({
+        entity_id: { _id: userId },
+        name: fileName,
+        type: result.resource_type,
+        url: result.url,
+      });
+    })
+    .then(() => res.send({ success: 'File uploaded' }));
 });
 
 /*************************************************************************************************
