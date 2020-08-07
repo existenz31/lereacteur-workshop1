@@ -48,20 +48,8 @@ fields: [{
     type: 'Number',
     get: function (user) {
       return usersMoviesRentals
-        .aggregate([
-          {$match:{ "userId": new mongoose.Types.ObjectId(user._id)}},
-          {
-            $group :
-              {
-                _id : "$userId",
-                count: { $sum: 1 }
-              }
-           }
-        ])
-        .then((result) => {
-          if (result && result.length > 0) { return result[0].count; }
-          return 0;
-        });
+        .countDocuments({ "userId": user._id })
+        .then((result) => result);
     }
   }, {
     field: 'gradeReviews',
