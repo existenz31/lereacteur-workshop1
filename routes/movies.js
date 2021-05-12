@@ -1,5 +1,5 @@
 const express = require('express');
-const { PermissionMiddlewareCreator } = require('forest-express-mongoose');
+const { PermissionMiddlewareCreator, RecordGetter } = require('forest-express-mongoose');
 const { movies } = require('../models');
 
 const collectionName = 'movies'
@@ -28,10 +28,33 @@ router.delete(`/${collectionName}/:recordId`, permissionMiddlewareCreator.delete
   next();
 });
 
+const QueryBuilder = require('forest-express-mongoose/dist/services/query-builder');
+const mongoose = require ('mongoose');
+const options = {
+  mongoose,
+  connections: [mongoose],
+};
+
 // Get a list of Records
 router.get(`/${collectionName}`, permissionMiddlewareCreator.list(), (request, response, next) => {
-  // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/default-routes#get-a-list-of-records
+  const qb = new QueryBuilder(movies, { timezone: 'Europe/Paris' }, options);
+  const prevFunction = qb.addSortToQuery;
+  qb.addSortToQuery = function (jsonQuery) {
+    var order = params.sort.startsWith('-') ? -1 : 1;
+    var sortParam = order > 0 ? params.sort : params.sort.substring(1);
+    jsonQuery.push({
+      $sort: (0, _defineProperty2["default"])({}, sortParam, order)
+    });
+    return _this;
+  };
+
+  if (request.query?.sort?.endsWith('uniqNumber')) {
+    request.query.sort = request.query.sort.replace(/([-]?)uniqNumber/, '$1metadata.uniqNumber')
+  }
   next();
+  // .then(() => {
+  //   qb.addSortToQuery = prevFunction
+  // });
 });
 
 // Get a number of Records
@@ -41,9 +64,14 @@ router.get(`/${collectionName}/count`, permissionMiddlewareCreator.list(), (requ
 });
 
 // Get a Record
-router.get(`/${collectionName}/:recordId`, permissionMiddlewareCreator.details(), (request, response, next) => {
+router.get(`/${collectionName}/:recordId(?!count)`, permissionMiddlewareCreator.details(), (request, response, next) => {
   // Learn what this route does here: https://docs.forestadmin.com/documentation/v/v6/reference-guide/routes/default-routes#get-a-record
-  next();
+//  next();
+  const recordGetter = new RecordGetter(movies);
+  recordGetter.get(request.params.recordId)
+    .then(record => recordGetter.serialize(record))
+    .then(recordSerialized => response.send(recordSerialized))
+    .catch(next);
 });
 
 // Export a list of Records

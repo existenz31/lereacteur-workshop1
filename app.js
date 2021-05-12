@@ -20,22 +20,26 @@ app.use(bodyParser.urlencoded({ extended: false, limit: '10mb'  })); // ADDED LI
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-let allowedOrigins = [/\.forestadmin\.com$/ ];
-
+let allowedOrigins = [/\.forestadmin\.com$/, /localhost:\d{4}$/];
 if (process.env.CORS_ORIGINS) {
   allowedOrigins = allowedOrigins.concat(process.env.CORS_ORIGINS.split(','));
 }
-
-app.use(cors({
+const corsConfig = {
   origin: allowedOrigins,
   allowedHeaders: ['Authorization', 'X-Requested-With', 'Content-Type'],
   maxAge: 86400, // NOTICE: 1 day
   credentials: true,
+};
+app.use('/forest/authentication', cors({
+  ...corsConfig,
+  origin: corsConfig.origin.concat('null')
 }));
+app.use(cors(corsConfig));
 
 app.use(jwt({
   secret: process.env.FOREST_AUTH_SECRET,
   credentialsRequired: false,
+  algorithms: ['HS256'],
 }));
 
 app.use('/forest', (request, response, next) => {

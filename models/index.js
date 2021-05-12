@@ -1,28 +1,31 @@
-const mongoose = require('mongoose');
-const requireAll = require('require-all');
+const fs = require('fs');
+const path = require('path');
+const Mongoose = require('mongoose');
 
-const models = {};
+const databasesConfiguration = require('../config/databases');
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+const connections = {};
+const db = {};
 
-mongoose.set('debug', true);
+databasesConfiguration.forEach((databaseInfo) => {
+  const connection = Mongoose.createConnection(databaseInfo.connection.url, databaseInfo.connection.options);
+  connections[databaseInfo.name] = connection;
 
-function filterFile(filename) {
-  if (filename.endsWith('.js') && filename !== 'index.js') {
-    return filename;
-  }
-
-  return false;
-}
-
-const modelsList = requireAll({
-  dirname: __dirname,
-  filter: (filename) => filterFile(filename),
+  const modelsDir = databaseInfo.modelsDir || path.join(__dirname, databaseInfo.name);
+  fs
+    .readdirSync(modelsDir)
+    .filter((file) => file.indexOf('.') !== 0 && file !== 'index.js')
+    .forEach((file) => {
+      try {
+        const model = require(path.join(modelsDir, file))(connection, Mongoose);
+        db[model.modelName] = model;
+      } catch (error) {
+        console.error(`Model creation error: ${error}`);
+      }
+    });
 });
 
-Object.keys(modelsList).forEach((filename) => {
-  const model = modelsList[filename];
-  models[model.modelName] = model;
-});
+db.objectMapping = Mongoose;
+db.connections = connections;
 
-module.exports = models;
+module.exports = db;

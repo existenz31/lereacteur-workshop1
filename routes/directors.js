@@ -58,4 +58,27 @@ router.delete(`/${collectionName}`, permissionMiddlewareCreator.delete(), (reque
   next();
 });
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+router.post('/actions/long-process', permissionMiddlewareCreator.smartAction(), async (req, res) => {
+  for (let i = 0; i<=25; i++) {
+    const progressDirector = 4*i;
+    await sleep(1000);
+    directors.findByIdAndUpdate(
+        { _id: "5f29264a39cc2f3da1a4a0d1"},
+        {"progress": progressDirector}, function(err, result) {
+          //res.send({ success: 'User is now accepted!' });
+        }
+    );
+  }
+  return res.send({ success: 'User is now accepted!' });
+
+});
+
+router.post('/actions/refresh-director', permissionMiddlewareCreator.smartAction(), async (req, res) => {
+  return res.send({ success: 'Refreshed!' });
+});
+
 module.exports = router;
